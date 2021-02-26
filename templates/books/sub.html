@@ -1,0 +1,59 @@
+{% extends 'main.html'%}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="mb-4">
+    <h3 class="mb-3 text-center">Suivre d'autres Utilisateurs</h3>
+    <form method="post" action="{% url 'sub' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">    
+            <select class="form-select" name="followed_user">
+                <option selected>Sélectionnez un utilisateur</option>
+
+                {% for user in follow_list %}
+
+                <option value="{{ user.id }}">{{ user.username}}</option>
+                
+                {% endfor %}
+
+            </select>            
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </div>    
+    </div>
+    </form>
+</div>
+
+<div class="mb-4">   
+    <h3 class="mb-4 text-center">Abonnements</h3>            
+    {% if follows %}
+        {% for follows_user in follows %}
+        <div class="row">
+            <div class="col mb-1"><li class="list-group-item">{{ follows_user.username }}</li></div>
+            <div class="col-auto mb-1 d-flex align-items-center">
+            <form method="post" action="{% url 'sub' %}">
+            {% csrf_token %}
+                <button type="submit" class="btn btn-primary" name="delete" value="{{ follows_user.id }}">Supprimer</button>
+            </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <li class="list-group-item list-group-item-danger">Vous ne suivez aucun utilisateur.</li>
+    {% endif %}
+</div>
+
+<div class="mb-4">
+    <h3 class="mb-4 text-center">Abonnés</h3>
+    {% if followed_by %}
+        {% for followed_by_user in followed_by %}
+        <li class="list-group-item">{{ followed_by_user.username }}</li>
+        {% endfor %}
+    {% else %}
+        <li class="list-group-item list-group-item-danger">Aucun utilisateur ne vous suit.</li>
+    {% endif %}                
+</div>
+
+{% endblock %}

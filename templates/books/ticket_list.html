@@ -1,0 +1,108 @@
+{% extends 'main.html' %}
+{% block content %}
+
+    <div class="container" style="max-width: 540px;">
+  <div class="row">    <div class="col-sm mb-3">
+    <div class="d-grid gap-2">
+            <a href="{% url 'add_ticket' %}" class="btn btn-primary">Créer un Ticket</a>
+
+                </div> </div>
+    <div class="col-sm mb-3">
+        <div class="d-grid gap-2">
+            <a href="{% url 'add_review'%}" class="btn btn-primary">Créer une Critique</a>
+</div>
+        </div>
+    </div>
+
+    {% if page_obj %}
+        {% for feed_item in page_obj %}
+
+            {% if feed_item.type_ == 'ticket' %}
+
+                <div class="card mb-3 mx-auto" style="max-width: 540px;">
+                    <div class="card-header">
+                        {{feed_item.user}} a demandé une critique - <small class="text-muted">{{ feed_item.time_created }}</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="card mb-3" style="max-width: 540px;">
+                            <div class="row g-0">
+                            {% if feed_item.image %}
+                                <div class="col-md-4">
+                                    <img src="{{ get_media_prefix }}{{ feed_item.image.url }}" alt="Image" class="img-thumbnail border-0">
+                                </div>
+                            {% endif %}
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ feed_item.title }}</a></h5>
+                                        <p class="card-text">{{ feed_item.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if not feed_item.completed %}
+                        
+                        <div class="text-center">
+                            <a href="{% url 'add_review' id_ticket=feed_item.id %}" class="btn btn-primary">Créer une critique</a>
+                        </div>
+
+                        {% endif %}
+                    </div>
+                </div>
+
+            {% elif feed_item.type_ == 'review' %}
+
+                <div class="card mb-3 mx-auto" style="max-width: 540px;">
+                    <div class="card-header">
+                        {{feed_item.user}} a posté une critique - <small class="text-muted">{{ feed_item.time_created }}</small>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ feed_item.headline }} - {% for i in feed_item.rating %}★{% endfor %}</h5>
+                        <p class="card-text">{{ feed_item.body }}</p>
+                        <div class="card" style="max-width: 540px;">
+                            <div class="card-header">
+                                Ticket - {{feed_item.ticket.user}}
+                            </div>
+                            <div class="row g-0">
+                            {% if feed_item.ticket.image %}
+                                <div class="col-md-4">
+                                    <img src="{{ get_media_prefix }}{{ feed_item.ticket.image.url }}" alt="Image" class="img-thumbnail border-0">
+                                </div>
+                            {% endif %}
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ feed_item.ticket.title }}</a></h5>
+                                        <p class="card-text">{{ feed_item.ticket.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+
+        {% endfor %}
+    {% else %}
+        <span>Pas de ticket</span>
+    {% endif %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% endblock %}
