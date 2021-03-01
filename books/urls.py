@@ -14,6 +14,11 @@ urlpatterns = [
         name='tickets',
     ),
     path(
+        route='posts/',
+        view=views.TicketListView.as_view(),
+        name='posts',
+    ),
+    path(
         route='add_ticket/',
         view=views.TicketCreateView.as_view(),
         name='add_ticket'
@@ -32,5 +37,25 @@ urlpatterns = [
         route='sub/',
         view=views.sub,
         name='sub'
+    ),
+    path(
+        'update/ticket/<int:pk>/',
+        views.TicketUpdateView.as_view(),
+        name='update_ticket',
+    ),
+    path(
+        'delete/ticket/<int:pk>/',
+        views.TicketDeleteView.as_view(),
+        name='delete_ticket',
+    ),
+    path(
+        'update/review/<int:pk>/',
+        views.ReviewUpdateView.as_view(),
+        name='update_review',
+    ),
+    path(
+        'delete/review/<int:pk>/',
+        views.ReviewDeleteView.as_view(),
+        name='delete_review',
     ),
 ]

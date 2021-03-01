@@ -23,6 +23,11 @@ class ReviewForm(forms.ModelForm):
             'rating',
             'body',
         ]
+        labels = {
+            "headline": "Description",
+            "rating": "Note",
+            "body": "Contenu",
+        }
 
 
 class UserFollowsForm(forms.ModelForm):

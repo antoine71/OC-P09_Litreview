@@ -47,6 +47,12 @@
                         </div>
 
                         {% endif %}
+                        {% if request.user == feed_item.user %}
+                        <div class="d-flex justify-content-end">
+                            <small><a href="{% url 'update_ticket' feed_item.pk %}" class="card-link">modifier</a> / 
+                            <a href="{% url 'delete_ticket' feed_item.pk %}" class="card-link m-0">supprimer</a></small>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -59,7 +65,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ feed_item.headline }} - {% for i in feed_item.rating %}★{% endfor %}</h5>
                         <p class="card-text">{{ feed_item.body }}</p>
-                        <div class="card" style="max-width: 540px;">
+                        <div class="card mb-3" style="max-width: 540px;">
                             <div class="card-header">
                                 Ticket - {{feed_item.ticket.user}}
                             </div>
@@ -77,6 +83,12 @@
                                 </div>
                             </div>
                         </div>
+                        {% if request.user == feed_item.user %}
+                         <div class="d-flex justify-content-end">
+                            <small><a href="{% url 'update_review' feed_item.pk %}" class="card-link">modifier</a> / 
+                            <a href="{% url 'delete_review' feed_item.pk %}" class="card-link m-0">supprimer</a></small>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 

@@ -1,15 +1,17 @@
 from operator import attrgetter
+from datetime import datetime
 
-from django.views.generic import CreateView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 
 from .models import Ticket, Review, UserFollows
-from .forms import TicketForm, ReviewForm, UserFollowsForm
+from .forms import TicketForm, ReviewForm
 
 
 class HomeView(LoginView):
@@ -22,11 +24,22 @@ class TicketListView(LoginRequiredMixin, TemplateView):
     context_object_name = 'feed_items'
 
     def get_context_data(self):
+        author = self.request.GET.get('author')
+        print(author)
         tickets = list(Ticket.objects.all())
         reviews = list(Review.objects.all())
         for review in reviews:
             review.rating = range(review.rating)
         feed_items = tickets + reviews
+        followed_users = [object.followed_user
+                          for object in UserFollows.objects.all()
+                          if object.user == self.request.user]
+        feed_items = [feed_item for feed_item in feed_items
+                      if (feed_item.user in followed_users)
+                      or (feed_item.user == self.request.user)]
+        if author:
+            feed_items = [feed_item for feed_item in feed_items
+                          if feed_item.user.username == author]
         feed_items.sort(key=attrgetter('time_created'), reverse=True)
         paginator = Paginator(feed_items, 5)
         page_number = self.request.GET.get('page')
@@ -46,19 +59,63 @@ class TicketCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ReviewAddView(LoginRequiredMixin, TemplateView):
-    template_name = 'books/review_form.html'
-    context_object_name = 'forms_'
+class TicketUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Ticket
+    fields = ['title', 'description', 'image']
+    template_name_suffix = '_update_form'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.time_created = datetime.now()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+
+class TicketDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Ticket
+    success_url = reverse_lazy('tickets')
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+
+class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
+    model = Review
+    fields = [
+            "headline",
+            "rating",
+            "body",
+        ]
+    template_name_suffix = '_update_form'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.time_created = datetime.now()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+
+class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+    success_url = reverse_lazy('tickets')
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form_ticket = TicketForm()
-        form_review = ReviewForm()
-        context['form_ticket'] = form_ticket
-        context['form_review'] = form_review
+        review = self.get_object()
+        review.rating = range(review.rating)
+        context["review"] = review
         return context
 
 
+@login_required
 def add_review(request, id_ticket=None):
     if id_ticket is not None:
         ticket = get_object_or_404(Ticket.objects, pk=id_ticket)
@@ -120,6 +177,7 @@ def add_review(request, id_ticket=None):
             return render(request, 'books/review_form.html', context)
 
 
+@login_required
 def sub(request):
     follows = []
     followed_by = []
