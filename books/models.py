@@ -37,8 +37,9 @@ class Review(models.Model):
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    def was_published_recently(self):
-        return self.time_created >= timezone.now() - datetime.timedelta(days=1)
+    @classmethod
+    def get_rating_range(self):
+        return range(5)
 
     def __str__(self):
         return self.headline

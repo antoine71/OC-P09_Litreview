@@ -33,19 +33,21 @@ class FeedView(LoginRequiredMixin, TemplateView):
                        or (review.user == self.request.user)
                        or (review.ticket.user in followed_users)
                        or (review.ticket.user == self.request.user))]
-        for review in reviews:
-            review.rating = range(review.rating)
         feed_items = tickets + reviews
+        feed_items.sort(key=attrgetter('time_created'), reverse=True)
         return feed_items
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         feed_items = self.get_feed_items()
-        feed_items.sort(key=attrgetter('time_created'), reverse=True)
+
         paginator = Paginator(feed_items, 5)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
+
         context['page_obj'] = page_obj
+        context['rating_range'] = Review.get_rating_range()
+
         return context
 
 
@@ -179,9 +181,7 @@ class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        review = self.get_object()
-        review.rating = range(review.rating)
-        context["review"] = review
+        context["rating_range"] = Review.get_rating_range()
         return context
 
     def delete(self, request, *args, **kwargs):

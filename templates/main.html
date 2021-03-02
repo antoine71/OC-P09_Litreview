@@ -10,7 +10,8 @@
         <div class="bg-dark mb-4">
             <div class="container">
                 <div class="row">
-                    <nav class="navbar navbar-expand-sm navbar-dark">
+                    <nav class="navbar navbar-expand-md navbar-dark">
+                    <div class="container-fluid">
                         <a class="navbar-brand" href="{% url 'users:home' %}">LITReview</a>
                         
                         {% if user.is_authenticated %}
@@ -19,7 +20,7 @@
                         <span class="navbar-toggler-icon"></span>
                         </button>
                         <div id="navbarContent" class="collapse navbar-collapse">
-                            <ul class="navbar-nav">
+                            <ul class="navbar-nav me-auto mb-2 mb-md-0">
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'books:feed'%}">Flux</a>
                                 </li>
@@ -33,10 +34,13 @@
                                     <a class="nav-link" href="{% url 'users:logout' %}?next={{request.path}}">Se déconnecter</a>
                                 </li>
                             </ul>
+                            <span class="navbar-text">
+                                Bienvenue, {{ request.user }}!
+                            </span>
                         </div>
                         
                         {% endif %}
-                    
+                    </div>
                     </nav>
                 </div>
             </div>
