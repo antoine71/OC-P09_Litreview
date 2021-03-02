@@ -1,24 +1,36 @@
 # ALGOINVEST
+
 Openclassrooms - Parcours développement Python Projet 9
 
 ## Status
+
 Under development
 
 ## Description
 
-To be updated
+This project is a web application that allows to request or post reviews of books or articles. This app has two main use cases:
+
+1. Users who request a review of a book or an article.
+2. Users who look for insteresting articles or books, based on the review of other users.
+
+The application is developed in Python, with the framework Django.
 
 ## Installation
-* Install Python 3.
-* Clone this repository using `$ git clone https://github.com/antoine71/litreview.git` (you can also download the code [as a zip file](https://github.com/antoine71/litreview/archive/main.zip)).
-* Install virtual environment
 
-To be updated
+1. Clone this repository using `$ git clone https://github.com/antoine71/litreview.git` (you can also download the code using [as a zip file](https://github.com/pythonmentor/ocmovies-api/archive/master.zip))
+2. Navigate to the root folder of the repository
+3. Create a virtual environment with `python -m venv env`
+4. Actuvate the virtual environment with `source env/bin/activate`
+5. Install project dependencies with `pip install -r requirements.txt`
+6. Run the server with `python manage.py runserver`
 
 ## Usage
 
-To be updated
+1. Open the following adress on a web browser: `http://localhost:8000/`
+2. Create a user account
+3. Post your own reviews and tickets
+4. Follow the activity of other users
 
 ## Preview
 
-To be updated
+![preview](/preview.jpg)
