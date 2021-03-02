@@ -5,7 +5,6 @@ from django.urls import reverse
 
 
 class Ticket(models.Model):
-    # Your Ticket model definition goes here
     type_ = 'ticket'
     title = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=2048, blank=True)
