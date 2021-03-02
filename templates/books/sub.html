@@ -4,19 +4,15 @@
 
 <div class="mb-4">
     <h3 class="mb-3 text-center">Suivre d'autres Utilisateurs</h3>
-    <form method="post" action="{% url 'sub' %}">
+    <form method="post" action="{% url 'books:sub' %}">
     {% csrf_token %}
     <div class="row">
         <div class="col">    
             <select class="form-select" name="followed_user">
-                <option selected>Sélectionnez un utilisateur</option>
-
+                <option value="" selected>Sélectionnez un utilisateur</option>
                 {% for user in follow_list %}
-
                 <option value="{{ user.id }}">{{ user.username}}</option>
-                
                 {% endfor %}
-
             </select>            
         </div>
         <div class="col-auto">
@@ -33,7 +29,7 @@
         <div class="row">
             <div class="col mb-1"><li class="list-group-item">{{ follows_user.username }}</li></div>
             <div class="col-auto mb-1 d-flex align-items-center">
-            <form method="post" action="{% url 'sub' %}">
+            <form method="post" action="{% url 'books:sub' %}">
             {% csrf_token %}
                 <button type="submit" class="btn btn-primary" name="delete" value="{{ follows_user.id }}">Supprimer</button>
             </form>

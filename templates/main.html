@@ -11,28 +11,27 @@
             <div class="container">
                 <div class="row">
                     <nav class="navbar navbar-expand-sm navbar-dark">
-                        <a class="navbar-brand" href="{% url 'home' %}">LITReview</a>
+                        <a class="navbar-brand" href="{% url 'users:home' %}">LITReview</a>
                         
                         {% if user.is_authenticated %}
                         
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                         <span class="navbar-toggler-icon"></span>
                         </button>
                         <div id="navbarContent" class="collapse navbar-collapse">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'tickets'%}">Flux</a>
+                                    <a class="nav-link" href="{% url 'books:feed'%}">Flux</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="?author={{ request.user }}">Posts</a>
+                                    <a class="nav-link" href="{%url 'books:posts' %}">Posts</a>
                                 </li>                                                                          
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="{% url 'sub' %}">Abonnements</a>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'books:sub' %}">Abonnements</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'logout' %}?next={{request.path}}">Se déconnecter</a>
+                                    <a class="nav-link" href="{% url 'users:logout' %}?next={{request.path}}">Se déconnecter</a>
                                 </li>
-
                             </ul>
                         </div>
                         

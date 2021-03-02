@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'bootstrap_pagination',
 ]
 
 MIDDLEWARE = [
@@ -102,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -122,9 +122,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_URL = 'home'
+LOGIN_URL = 'users:home'
 
-LOGIN_REDIRECT_URL = 'tickets'
+LOGIN_REDIRECT_URL = 'books:feed'
 
 MEDIA_URL = '/media/'
 

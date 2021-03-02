@@ -1,25 +1,53 @@
+
+
 {% extends 'main.html' %}
+{% load bootstrap_pagination %}
 {% block content %}
 
-    {% if feed %}
-        {% for item in feed %}
-
-        <div class="card mb-3" style="max-width: 540px; margin: auto;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="..." alt="...">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ ticket.title }}</a></h5>
-                        <p class="card-text">{{ ticket.description }}</p>
-                        <p class="card-text"><small class="text-muted">{{ ticket.time_created }}</small></p>
-                    </div>
-                </div>
-            </div>
+<div class="container" style="max-width: 540px;">
+  <div class="row">    
+    <div class="col-sm mb-3">
+        <div class="d-grid gap-2">
+            <a href="{% url 'books:add_ticket' %}" class="btn btn-primary">Créer un Ticket</a>
+        </div> 
+    </div>
+    <div class="col-sm mb-3">
+        <div class="d-grid gap-2">
+            <a href="{% url 'books:add_review'%}" class="btn btn-primary">Créer une Critique</a>
         </div>
+    </div>
+</div>
+
+    {% if page_obj %}
+        {% for feed_item in page_obj %}
+
+            {% if feed_item.type_ == 'ticket' %}
+
+                {% include 'books/ticket_card.html' with ticket=feed_item hide_edit=True %}
+                {% block ticket_card %}
+
+                {% endblock %}
+
+            {% elif feed_item.type_ == 'review' %}
+
+                {% include 'books/review_card.html' with review=feed_item %}
+                {% block review_card %}
+
+                {% endblock %}
+
+            {% endif %}
+
         {% endfor %}
     {% else %}
-        <span>Pas de ticket</span>
+        <div class="card mb-3 mx-auto" style="max-width: 540px;">
+            <div class="card-body">
+                <p class="card-text text-danger text-center">Vous n'avez aucun post à afficher.</small></p>
+            </div>
+        </div>
     {% endif %}
+
+    <div class="d-flex justify-content-center">
+        {% bootstrap_paginate page_obj %}
+    </div>
+
 {% endblock %}

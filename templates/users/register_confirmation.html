@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+{% block content %}
+   
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm text-center">
+                <p>L'utilisateur a été créé avec succès. Veuillez vous connecter.</p>
+            </div>
+            <div class="text-center">
+                <a href="{% url 'users:home'%}" class="btn btn-primary">Retour à l'accueil</a>
+            </div>
+        </div>
+  </div>
+
+{% endblock %}

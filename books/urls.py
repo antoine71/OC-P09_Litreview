@@ -2,26 +2,27 @@ from django.urls import path
 
 from . import views
 
+app_name = 'books'
 urlpatterns = [
     path(
-        route='',
-        view=views.HomeView.as_view(redirect_authenticated_user=True),
-        name='home',
-    ),
-    path(
-        route='tickets/',
-        view=views.TicketListView.as_view(),
-        name='tickets',
+        route='feed/',
+        view=views.FeedView.as_view(),
+        name='feed',
     ),
     path(
         route='posts/',
-        view=views.TicketListView.as_view(),
+        view=views.PostsView.as_view(),
         name='posts',
     ),
     path(
         route='add_ticket/',
         view=views.TicketCreateView.as_view(),
         name='add_ticket'
+    ),
+    path(
+        route='subscriptions/',
+        view=views.sub,
+        name='sub'
     ),
     path(
         route='add_review/',
@@ -33,11 +34,7 @@ urlpatterns = [
         view=views.add_review,
         name='add_review'
     ),
-    path(
-        route='sub/',
-        view=views.sub,
-        name='sub'
-    ),
+
     path(
         'update/ticket/<int:pk>/',
         views.TicketUpdateView.as_view(),

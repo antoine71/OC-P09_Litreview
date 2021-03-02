@@ -22,7 +22,7 @@ class Ticket(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('tickets')
+        return reverse('books:feed')
 
 
 class Review(models.Model):
@@ -44,7 +44,7 @@ class Review(models.Model):
         return self.headline
 
     def get_absolute_url(self):
-        return reverse('tickets')
+        return reverse('books:feed')
 
 
 class UserFollows(models.Model):

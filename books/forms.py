@@ -12,6 +12,11 @@ class TicketForm(forms.ModelForm):
             'description',
             'image',
         ]
+        labels = {
+            "title": "Titre",
+            "description": "Description",
+            "image": "Image",
+        }
 
 
 class ReviewForm(forms.ModelForm):

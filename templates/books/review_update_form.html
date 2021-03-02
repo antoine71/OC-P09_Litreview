@@ -5,35 +5,20 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm mb-5">
-                <div class="card mb-3 mx-auto" style="max-width: 540px;">
-                    <div class="card-header">
-                        {{review.ticket.user}} a demandé une critique - <small class="text-muted">{{ review.ticket.time_created }}</small>
-                    </div>
-                    <div class="card-body mb-3">
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                            {% if review.ticket.image %}
-                                <div class="col-md-4">
-                                    <img src="{{ get_media_prefix }}{{ review.ticket.image.url }}" alt="Image" class="img-thumbnail border-0">
-                                </div>
-                            {% endif %}
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ review.ticket.title }}</a></h5>
-                                        <p class="card-text">{{ review.ticket.description }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% include 'books/ticket_card.html' with ticket=review.ticket %}
+                {% block ticket_card %}
+
+                {% endblock %}
             </div>
         </div>               
         <div class="row align-items-center">
             <div class="col-sm mb-5">
+                
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form|crispy }}
+                    <div class="mb-3">
+                        {{ form|crispy }}
+                    </div>
                     <div class="mb-3 text-end">
                         <button type="submit" class="btn btn-primary">Envoyer</button>
                     </div>
@@ -41,7 +26,5 @@
             </div>
         </div>
     </div>
-
-    </script>
 
 {% endblock %}

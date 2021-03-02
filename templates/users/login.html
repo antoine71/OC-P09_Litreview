@@ -1,0 +1,18 @@
+
+{% load crispy_forms_tags %}
+{% block login %}
+
+
+    <h3 class="mb-4 text-center">Connectez-vous</h2>
+    <form method="post">
+            {% csrf_token %}
+        <div class="mb-3">
+            {{ form|crispy }}
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Se connecter</button>
+        </div>
+    </form>
+
+
+{% endblock %}

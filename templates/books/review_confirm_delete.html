@@ -2,33 +2,10 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<div class="card mb-3 mx-auto" style="max-width: 540px;">
-    <div class="card-header">
-        {{review.user}} a posté une critique - <small class="text-muted">{{ review.time_created }}</small>
-    </div>
-    <div class="card-body">
-        <h5 class="card-title">{{ review.headline }} - {% for i in review.rating %}★{% endfor %}</h5>
-        <p class="card-text">{{ review.body }}</p>
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="card-header">
-                Ticket - {{review.ticket.user}}
-            </div>
-            <div class="row g-0">
-            {% if review.ticket.image %}
-                <div class="col-md-4">
-                    <img src="{{ get_media_prefix }}{{ review.ticket.image.url }}" alt="Image" class="img-thumbnail border-0">
-                </div>
-            {% endif %}
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ review.ticket.title }}</a></h5>
-                        <p class="card-text">{{ review.ticket.description }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'books/review_card.html' %}
+{% block review_card %}
+
+{% endblock %}
 
 <div class="card mb-3 mx-auto" style="max-width: 540px;">
     <div class="card-body">
@@ -41,6 +18,5 @@
         </form>
     </div>
 </div>
-
 
 {% endblock %}

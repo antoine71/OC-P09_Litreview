@@ -3,7 +3,6 @@ from datetime import datetime
 
 from django.views.generic import CreateView, TemplateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
@@ -14,40 +13,49 @@ from .models import Ticket, Review, UserFollows
 from .forms import TicketForm, ReviewForm
 
 
-class HomeView(LoginView):
-    template_name = 'books/home.html'
+class FeedView(LoginRequiredMixin, TemplateView):
 
-
-class TicketListView(LoginRequiredMixin, TemplateView):
-
-    template_name = 'books/ticket_list.html'
+    template_name = 'books/feed.html'
     context_object_name = 'feed_items'
+    view_type = 'feed'
 
-    def get_context_data(self):
-        author = self.request.GET.get('author')
-        print(author)
+    def get_feed_items(self):
         tickets = list(Ticket.objects.all())
         reviews = list(Review.objects.all())
-        for review in reviews:
-            review.rating = range(review.rating)
-        feed_items = tickets + reviews
         followed_users = [object.followed_user
                           for object in UserFollows.objects.all()
                           if object.user == self.request.user]
-        feed_items = [feed_item for feed_item in feed_items
-                      if (feed_item.user in followed_users)
-                      or (feed_item.user == self.request.user)]
-        if author:
-            feed_items = [feed_item for feed_item in feed_items
-                          if feed_item.user.username == author]
+        tickets = [ticket for ticket in tickets
+                   if (ticket.user in followed_users)
+                   or (ticket.user == self.request.user)]
+        reviews = [review for review in reviews
+                   if ((review.user in followed_users)
+                       or (review.user == self.request.user)
+                       or (review.ticket.user in followed_users)
+                       or (review.ticket.user == self.request.user))]
+        for review in reviews:
+            review.rating = range(review.rating)
+        feed_items = tickets + reviews
+        return feed_items
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        feed_items = self.get_feed_items()
         feed_items.sort(key=attrgetter('time_created'), reverse=True)
         paginator = Paginator(feed_items, 5)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        context = {
-            'page_obj': page_obj,
-        }
+        context['page_obj'] = page_obj
         return context
+
+
+class PostsView(FeedView):
+
+    def get_feed_items(self):
+        feed_items = super().get_feed_items()
+        feed_items = [feed_item for feed_item in feed_items
+                      if feed_item.user == self.request.user]
+        return feed_items
 
 
 class TicketCreateView(LoginRequiredMixin, CreateView):
@@ -75,44 +83,10 @@ class TicketUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class TicketDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Ticket
-    success_url = reverse_lazy('tickets')
+    success_url = reverse_lazy('books:feed')
 
     def test_func(self):
         return self.request.user == self.get_object().user
-
-
-class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-
-    model = Review
-    fields = [
-            "headline",
-            "rating",
-            "body",
-        ]
-    template_name_suffix = '_update_form'
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.time_created = datetime.now()
-        return super().form_valid(form)
-
-    def test_func(self):
-        return self.request.user == self.get_object().user
-
-
-class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Review
-    success_url = reverse_lazy('tickets')
-
-    def test_func(self):
-        return self.request.user == self.get_object().user
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        review = self.get_object()
-        review.rating = range(review.rating)
-        context["review"] = review
-        return context
 
 
 @login_required
@@ -120,7 +94,7 @@ def add_review(request, id_ticket=None):
     if id_ticket is not None:
         ticket = get_object_or_404(Ticket.objects, pk=id_ticket)
         if ticket.completed:
-            return redirect('tickets')
+            return redirect('books:feed')
     else:
         ticket = None
     if request.method == "GET":
@@ -165,7 +139,7 @@ def add_review(request, id_ticket=None):
                 form_ticket.save()
                 form_review.instance.ticket = Ticket.objects.last()
             form_review.save()
-            return redirect('tickets')
+            return redirect('books:feed')
         else:
             context = {
                 'ticket': ticket,
@@ -175,6 +149,46 @@ def add_review(request, id_ticket=None):
             if id_ticket:
                 context['id_ticket'] = id_ticket
             return render(request, 'books/review_form.html', context)
+
+
+class ReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
+    model = Review
+    fields = [
+            "headline",
+            "rating",
+            "body",
+        ]
+    template_name_suffix = '_update_form'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.time_created = datetime.now()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+
+class ReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+    success_url = reverse_lazy('books:feed')
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        review = self.get_object()
+        review.rating = range(review.rating)
+        context["review"] = review
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        ticket = self.get_object().ticket
+        ticket.completed = False
+        ticket.save()
+        return super().delete(request, *args, **kwargs)
 
 
 @login_required
@@ -205,9 +219,9 @@ def sub(request):
             new_entry = UserFollows(
                 user=new_user, followed_user=new_followed_user)
             new_entry.save()
-            return redirect('sub') 
         elif request.POST.get('delete'):
             UserFollows.objects.get(
-                followed_user=User.objects.get(id=request.POST['delete'])
+                user=request.user,
+                followed_user=User.objects.get(id=request.POST['delete']),
                 ).delete()
-            return redirect('sub')
+        return redirect('books:sub')

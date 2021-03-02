@@ -4,13 +4,13 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-sm text-center mb-5">
-          <form action="register/">
+          <form action="{% url 'users:register' %}">
             <h3 class="mb-4">Inscrivez-vous maintenant</h3>
-            <button type="submit" class="btn btn-primary" type="submit">S'inscrire</button>
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
           </form>
         </div>
-        <div class="col-sm text-center mb-5">
-            {% include 'registration/login.html' %}
+        <div class="col-sm mb-5">
+            {% include 'users/login.html' %}
             {% block login %}
 
 

@@ -1,0 +1,26 @@
+{% block review_card %}
+
+<div class="card mb-3 mx-auto" style="max-width: 540px;">
+    <div class="card-header">
+        {{review.user}} a posté une critique - <small class="text-muted">{{ review.time_created }}</small>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ review.headline }} - {% for i in review.rating %}★{% endfor %}</h5>
+        <p class="card-text">{{ review.body }}</p>
+
+        {% include 'books/ticket_card.html' with ticket=review.ticket nested=True %}
+        {% block ticket_card %}
+
+        {% endblock %}
+        {% if view.view_type == 'feed' %}
+            {% if request.user == review.user %}
+                <div class="d-flex justify-content-end">
+                <small><a href="{% url 'books:update_review' review.pk %}" class="card-link">modifier</a> / 
+                <a href="{% url 'books:delete_review' review.pk %}" class="card-link m-0">supprimer</a></small>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
