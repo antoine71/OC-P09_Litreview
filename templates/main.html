@@ -11,36 +11,39 @@
             <div class="container">
                 <div class="row">
                     <nav class="navbar navbar-expand-md navbar-dark">
-                    <div class="container-fluid">
-                        <a class="navbar-brand" href="{% url 'users:home' %}">LITReview</a>
-                        
-                        {% if user.is_authenticated %}
-                        
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                        <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div id="navbarContent" class="collapse navbar-collapse">
-                            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'books:feed'%}">Flux</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{%url 'books:posts' %}">Posts</a>
-                                </li>                                                                          
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'books:sub' %}">Abonnements</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'users:logout' %}?next={{request.path}}">Se déconnecter</a>
-                                </li>
-                            </ul>
-                            <span class="navbar-text">
-                                Bienvenue, {{ request.user }}!
-                            </span>
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="{% url 'users:home' %}">
+                                {% load static %}
+                                <img src="{% static 'logo.png' %}" alt="logo" class="me-2" style="filter: invert(100%); max-height: 40px;">
+                                LITReview
+                            </a>
+                            {% if user.is_authenticated %}
+                            
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div id="navbarContent" class="collapse navbar-collapse">
+                                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'books:feed'%}">Flux</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{%url 'books:posts' %}">Posts</a>
+                                    </li>                                                                          
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'books:sub' %}">Abonnements</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'users:logout' %}?next={{request.path}}">Se déconnecter</a>
+                                    </li>
+                                </ul>
+                                <span class="navbar-text">
+                                    Bienvenue, {{ request.user }}!
+                                </span>
+                            </div>
+                            
+                            {% endif %}
                         </div>
-                        
-                        {% endif %}
-                    </div>
                     </nav>
                 </div>
             </div>
