@@ -5,6 +5,10 @@ from . import views
 app_name = 'books'
 urlpatterns = [
     path(
+        route='',
+        view=views.FeedView.as_view(),
+    ),
+    path(
         route='feed/',
         view=views.FeedView.as_view(),
         name='feed',

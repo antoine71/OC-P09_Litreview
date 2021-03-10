@@ -4,7 +4,7 @@ Openclassrooms - Parcours développement Python Projet 9
 
 ## Status
 
-Under development
+This project is ready for evaluation.
 
 ## Description
 
